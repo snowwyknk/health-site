@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Правильное Питание</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Здоровое питание</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Главная</a>
+            <a href="{{ url_for('show_articles') }}">Блог</a>
+            <a href="{{ url_for('nutrition') }}">Питание</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="food-tips">
+            <h2>5 правил здорового питания:</h2>
+            <ol>
+                <li>Ешьте больше овощей и фруктов</li>
+                <li>Пейте воду вместо сладких напитков</li>
+                <li>Выбирайте цельнозерновые продукты</li>
+                <li>Ограничьте фастфуд</li>
+                <li>Контролируйте размер порций</li>
+            </ol>
+        </section>
+    </main>
+</body>
+</html>

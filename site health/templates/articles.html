@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статьи о здоровье</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Твой Путь к Здоровью</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Главная</a>
+            <a href="{{ url_for('show_articles') }}">Блог</a>
+        </nav>
+    </header>
+
+    <main>
+        {% for post in posts %}
+        <article>
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.content }}</p>
+            <small>{{ post.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+        </article>
+        {% endfor %}
+    </main>
+
+    <footer>
+        <p>© 2025 Твой Гид по Здоровью и спорту</p>
+    </footer>
+</body>
+</html>

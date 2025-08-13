@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Здоровый Образ Жизни</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Твой Путь к Здоровью</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Главная</a>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('add_post') }}">Добавить статью</a>
+                <a href="{{ url_for('logout') }}">Выйти</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Войти</a>
+                <a href="{{ url_for('register') }}">Регистрация</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        <section class="intro">
+            <h2>Почему это важно?</h2>
+            <p>Здоровье — основа счастливой жизни. Здесь ты найдёшь советы по питанию, спорту и внутреннему здоровью.</p>
+            <img src="https://via.placeholder.com/600x300" alt="Здоровый образ жизни">
+        </section>
+
+        <section class="daily-tips">
+            <h2>Советы на сегодня</h2>
+            <ul>
+                <li>Пей 2 литра воды в день</li>
+                <li>Спи 7-8 часов</li>
+                <li>30 минут физической активности</li>
+                <li>Прогуляйтесь по парку</li>
+                <li>Попробуйте новые виды спорта</li>
+            </ul>
+        </section>
+
+        <section class="motivation">
+            <h2>Мотивация</h2>
+            <div class="quote">
+                <p>"Здоровье - это не всё, но всё без здоровья - это ничто"</p>
+                <small>- Сократ</small>
+            </div>
+            <button onclick="alert('Ты можешь больше, чем думаешь!')">Мотивируй меня</button>
+        </section>
+
+        <section class="quick-links">
+            <h2>Быстрые ссылки</h2>
+            <div class="links-grid">
+                <a href="{{ url_for('nutrition') }}" class="link-card">
+                    <h3>Питание</h3>
+                    <p>Основы здорового рациона</p>
+                </a>
+                <a href="{{ url_for('show_articles') }}" class="link-card">
+                    <h3>Статьи</h3>
+                    <p>Полезные материалы</p>
+                </a>
+                <a href="#" class="link-card">
+                    <h3>Упражнения</h3>
+                    <p>Тренировки дома</p>
+                </a>
+                <a href="#" class="link-card">
+                    <h3>Медитация</h3>
+                    <p>Техники релаксации</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="weekly-challenge">
+            <h2>Испытание недели</h2>
+            <div class="challenge-card">
+                <h3>10 000 шагов в день</h3>
+                <p>Попробуйте проходить 10 000 шагов каждый день этой недели</p>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 45%">45%</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Твой Гид по Здоровью и спорту</p>
+    </footer>
+</body>
+</html>
