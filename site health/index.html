@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Здоровый Образ Жизни & Экология</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<script>
+// Данные викторины
+const climateQuestions = [
+    {
+        question: "Какой транспорт оказывает наименьшее воздействие на климат?",
+        options: [
+            { text: "🚗 Личный автомобиль", correct: false, impact: -15, icon: "🚗" },
+            { text: "🚌 Общественный транспорт", correct: true, impact: 10, icon: "🚌" },
+            { text: "🚲 Велосипед", correct: true, impact: 15, icon: "🚲" },
+            { text: "✈️ Самолет", correct: false, impact: -25, icon: "✈️" }
+        ]
+    },
+    {
+        question: "Что эффективнее всего снижает углеродный след?",
+        options: [
+            { text: "💡 Выключать свет", correct: true, impact: 5, icon: "💡" },
+            { text: "🌱 Вегетарианство 1 день в неделю", correct: true, impact: 8, icon: "🌱" },
+            { text: "🚰 Пить бутилированную воду", correct: false, impact: -12, icon: "🚰" },
+            { text: "🛒 Покупать локальные продукты", correct: true, impact: 7, icon: "🛒" }
+        ]
+    },
+    {
+        question: "Какой источник энергии самый экологичный?",
+        options: [
+            { text: "☀️ Солнечная энергия", correct: true, impact: 12, icon: "☀️" },
+            { text: "🛢️ Уголь", correct: false, impact: -20, icon: "🛢️" },
+            { text: "💨 Ветряная энергия", correct: true, impact: 11, icon: "💨" },
+            { text: "⚡ Атомная энергия", correct: true, impact: 9, icon: "⚡" }
+        ]
+    },
+    {
+        question: "Что ухудшает ситуацию с глобальным потеплением?",
+        options: [
+            { text: "🌳 Вырубка лесов", correct: false, impact: -18, icon: "🌳" },
+            { text: "🏭 Промышленные выбросы", correct: false, impact: -22, icon: "🏭" },
+            { text: "🚗 Частые поездки на авто", correct: false, impact: -16, icon: "🚗" },
+            { text: "✅ Все вышеперечисленное", correct: true, impact: 15, icon: "✅" }
+        ]
+    },
+    {
+        question: "Как экономить электроэнергию эффективнее?",
+        options: [
+            { text: "🔌 Оставлять зарядные устройства в розетке", correct: false, impact: -8, icon: "🔌" },
+            { text: "💡 Использовать LED лампы", correct: true, impact: 9, icon: "💡" },
+            { text: "❄️ Ставить холодильник рядом с плитой", correct: false, impact: -10, icon: "❄️" },
+            { text: "🖥️ Не выключать компьютер на ночь", correct: false, impact: -12, icon: "🖥️" }
+        ]
+    },
+    {
+        question: "Что помогает бороться с изменением климата?",
+        options: [
+            { text: "🌿 Посадка деревьев", correct: true, impact: 14, icon: "🌿" },
+            { text: "🔄 Переработка отходов", correct: true, impact: 11, icon: "🔄" },
+            { text: "💧 Экономия воды", correct: true, impact: 8, icon: "💧" },
+            { text: "✅ Все варианты верны", correct: true, impact: 16, icon: "✅" }
+        ]
+    },
+    {
+        question: "Какой продукт имеет наибольший углеродный след?",
+        options: [
+            { text: "🥦 Овощи местного производства", correct: false, impact: 6, icon: "🥦" },
+            { text: "🥩 Говядина", correct: true, impact: -18, icon: "🥩" },
+            { text: "🍎 Фрукты по сезону", correct: false, impact: 5, icon: "🍎" },
+            { text: "🍞 Хлеб", correct: false, impact: 4, icon: "🍞" }
+        ]
+    },
+    {
+        question: "Что такое парниковый эффект?",
+        options: [
+            { text: "🌡️ Естественное сохранение тепла атмосферой", correct: true, impact: 10, icon: "🌡️" },
+            { text: "🔥 Сжигание лесов", correct: false, impact: -12, icon: "🔥" },
+            { text: "🏭 Загрязнение воздуха заводами", correct: false, impact: -14, icon: "🏭" },
+            { text: "❄️ Похолодание климата", correct: false, impact: -8, icon: "❄️" }
+        ]
+    },
+    {
+        question: "Как снизить потребление пластика?",
+        options: [
+            { text: "🛍️ Использовать многоразовые сумки", correct: true, impact: 9, icon: "🛍️" },
+            { text: "💧 Пить из многоразовой бутылки", correct: true, impact: 8, icon: "💧" },
+            { text: "🥡 Покупать продукты без упаковки", correct: true, impact: 10, icon: "🥡" },
+            { text: "✅ Все варианты верны", correct: true, impact: 12, icon: "✅" }
+        ]
+    },
+    {
+        question: "Что такое устойчивое развитие?",
+        options: [
+            { text: "📈 Рост любой ценой", correct: false, impact: -15, icon: "📈" },
+            { text: "🌱 Развитие без ущерба для будущих поколений", correct: true, impact: 20, icon: "🌱" },
+            { text: "💰 Максимальная прибыль", correct: false, impact: -12, icon: "💰" },
+            { text: "🏭 Индустриализация", correct: false, impact: -16, icon: "🏭" }
+        ]
+    }
+];
+
+class ClimateQuiz {
+    constructor() {
+        this.currentQuestion = 0;
+        this.health = 100;
+        this.correctAnswers = 0;
+        this.co2Saved = 0;
+        this.questions = [...climateQuestions];
+        this.shuffleQuestions();
+    }
+
+    shuffleQuestions() {
+        // Перемешиваем вопросы, но берем только 10
+        this.questions = this.questions
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 10);
+    }
+
+    displayQuestion() {
+        if (this.currentQuestion >= this.questions.length) {
+            this.showResults();
+            return;
+        }
+
+        const question = this.questions[this.currentQuestion];
+        document.getElementById('question-text').textContent = question.question;
+        document.getElementById('question-number').textContent = this.currentQuestion + 1;
+
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+
+        question.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'option-btn';
+            button.innerHTML = `
+                <span class="option-icon">${option.icon}</span>
+                <span class="option-text">${option.text}</span>
+            `;
+            button.onclick = () => this.checkAnswer(option, button);
+            optionsContainer.appendChild(button);
+        });
+
+        this.updateProgress();
+    }
+
+    checkAnswer(selectedOption, buttonElement) {
+        const question = this.questions[this.currentQuestion];
+        const options = document.querySelectorAll('.option-btn');
+
+        // Показываем правильные/неправильные ответы
+        options.forEach(btn => {
+            const optionText = btn.querySelector('.option-text').textContent;
+            const correctOption = question.options.find(opt => opt.text === optionText);
+            
+            if (correctOption.correct) {
+                btn.classList.add('correct');
+            } else if (btn === buttonElement && !selectedOption.correct) {
+                btn.classList.add('wrong');
+                btn.classList.add('shake');
+            }
+        });
+
+        // Обновляем статистику
+        if (selectedOption.correct) {
+            this.correctAnswers++;
+            this.co2Saved += selectedOption.impact;
+            this.health = Math.min(100, this.health + selectedOption.impact);
+        } else {
+            this.health = Math.max(0, this.health + selectedOption.impact);
+        }
+
+        this.updateStats();
+
+        // Переход к следующему вопросу через 2 секунды
+        setTimeout(() => {
+            this.currentQuestion++;
+            this.displayQuestion();
+        }, 2000);
+    }
+
+    updateStats() {
+        document.getElementById('health-value').textContent = `${Math.max(0, this.health)}%`;
+        document.getElementById('planet-health-bar').style.width = `${Math.max(0, this.health)}%`;
+        
+        // Меняем цвет health bar в зависимости от здоровья
+        const healthBar = document.getElementById('planet-health-bar');
+        if (this.health > 70) {
+            healthBar.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
+        } else if (this.health > 30) {
+            healthBar.style.background = 'linear-gradient(90deg, #FF9800, #FFB74D)';
+        } else {
+            healthBar.style.background = 'linear-gradient(90deg, #f44336, #EF5350)';
+            healthBar.classList.add('shake');
+        }
+
+        document.getElementById('correct-count').textContent = this.correctAnswers;
+        document.getElementById('co2-saved').textContent = Math.max(0, this.co2Saved);
+    }
+
+    updateProgress() {
+        const progress = ((this.currentQuestion + 1) / this.questions.length) * 100;
+        document.getElementById('quiz-progress').style.width = `${progress}%`;
+        document.getElementById('progress-text').textContent = `${this.currentQuestion + 1}/${this.questions.length}`;
+    }
+
+    showResults() {
+        document.getElementById('question-section').style.display = 'none';
+        document.getElementById('result-section').style.display = 'block';
+
+        document.getElementById('final-health').textContent = `${Math.max(0, this.health)}%`;
+        document.getElementById('final-correct').textContent = `${this.correctAnswers}/${this.questions.length}`;
+        document.getElementById('final-co2').textContent = `${Math.max(0, this.co2Saved)} кг`;
+
+        const achievementBadge = document.getElementById('achievement-badge');
+        if (this.correctAnswers >= 9) {
+            achievementBadge.innerHTML = '🏆 ЭКО-ГЕРОЙ! Отличный результат!';
+            achievementBadge.style.background = 'linear-gradient(135deg, #FFD700, #FFC400)';
+        } else if (this.correctAnswers >= 7) {
+            achievementBadge.innerHTML = '⭐ ЗАЩИТНИК ПЛАНЕТЫ! Хорошая работа!';
+            achievementBadge.style.background = 'linear-gradient(135deg, #C0C0C0, #A0A0A0)';
+        } else if (this.correctAnswers >= 5) {
+            achievementBadge.innerHTML = '🌱 НАЧИНАЮЩИЙ ЭКОЛОГ! Продолжайте в том же духе!';
+            achievementBadge.style.background = 'linear-gradient(135deg, #CD7F32, #B08D57)';
+        } else {
+            achievementBadge.innerHTML = '📚 ЕСТЬ К ЧЕМУ СТРЕМИТЬСЯ! Изучайте материалы сайта!';
+            achievementBadge.style.background = 'linear-gradient(135deg, #E0E0E0, #BDBDBD)';
+        }
+    }
+}
+
+// Глобальные функции
+let quiz;
+
+function startQuiz() {
+    quiz = new ClimateQuiz();
+    quiz.displayQuestion();
+}
+
+function restartQuiz() {
+    document.getElementById('result-section').style.display = 'none';
+    document.getElementById('question-section').style.display = 'block';
+    startQuiz();
+}
+
+// Запускаем игру при загрузке страницы
+document.addEventListener('DOMContentLoaded', startQuiz);
+
+// Анимация появления при скролле
+const scrollObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            
+            // Добавляем небольшую задержку для последовательного появления
+            const delay = entry.target.getAttribute('data-delay') || 0;
+            entry.target.style.transitionDelay = `${delay}ms`;
+        }
+    });
+}, { 
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+});
+
+// Инициализация анимаций
+document.addEventListener('DOMContentLoaded', function() {
+    // Добавляем классы анимаций элементам
+    document.querySelectorAll('.stat-card, .article-card, .habit-card').forEach((el, index) => {
+        el.classList.add('fade-in-scroll');
+        el.setAttribute('data-delay', index * 100);
+        scrollObserver.observe(el);
+    });
+    
+    // Анимация для заголовков
+    document.querySelectorAll('h1, h2').forEach((el, index) => {
+        el.classList.add('slide-in-left');
+        el.setAttribute('data-delay', index * 150);
+        scrollObserver.observe(el);
+    });
+    
+    // Анимация для кнопок и форм
+    document.querySelectorAll('button, .form-input, .link-card').forEach((el, index) => {
+        el.classList.add('fade-in-scroll');
+        el.setAttribute('data-delay', index * 50);
+        scrollObserver.observe(el);
+    });
+    
+    // Специальные анимации для важных элементов
+    const importantElements = document.querySelectorAll('.stat-number, .progress-bar');
+    importantElements.forEach(el => {
+        el.classList.add('pulse-element');
+    });
+    
+    // Анимация "парения" для иконок
+    const floatIcons = document.querySelectorAll('.habit-icon, .food-icon');
+    floatIcons.forEach((el, index) => {
+        el.classList.add('float-element');
+        el.style.animationDelay = `${index * 0.5}s`;
+    });
+});
+
+// Функция для ручного запуска анимации
+function animateElement(elementId, animationClass) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.classList.add(animationClass);
+        setTimeout(() => {
+            element.classList.remove(animationClass);
+        }, 1000);
+    }
+}
+
+// Анимация при клике на кнопки
+document.addEventListener('click', function(e) {
+    if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+        const button = e.target.tagName === 'BUTTON' ? e.target : e.target.closest('button');
+        button.classList.add('heartbeat');
+        setTimeout(() => {
+            button.classList.remove('heartbeat');
+        }, 600);
+    }
+});
+</script>
+
+<body>
+    <header>
+        <h1>🌿 Твой Путь к Здоровью и Устойчивому Будущему</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">🏠 Главная</a>
+        <a href="{{ url_for('show_articles') }}">📚 Статьи</a>
+        <a href="{{ url_for('nutrition') }}">🥗 Питание</a>
+        <a href="{{ url_for('exercises') }}">💪 Упражнения</a>
+        <a href="{{ url_for('eco_tips') }}">🌍 Эко-советы</a>
+        <a href="{{ url_for('quiz') }}">🧠 Тест</a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('add_post') }}">✍️ Добавить статью</a>
+            <a href="{{ url_for('logout') }}">🚪 Выйти</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">🔐 Войти</a>
+            <a href="{{ url_for('register') }}">📝 Регистрация</a>
+        {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        <!-- Секция статистики глобального потепления -->
+        <section class="climate-section fade-in">
+            <h2>🌡️ Статистика глобального потепления</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>📈 Рост температуры</h3>
+                    <div class="stat-number">+1.2°C</div>
+                    <p>Средняя температура с доиндустриальной эпохи</p>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: 60%">60% к цели 2°C</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card warning">
+                    <h3>🏔️ Таяние ледников</h3>
+                    <div class="stat-number">-28%</div>
+                    <p>Потеря арктического льда с 1979 года</p>
+                    <div class="progress-container">
+                        <div class="progress-bar warning" style="width: 75%">Ускоряется</div>
+                        <div class="progress-bar pulse-element" style="width: 60%">60% к цели 2°C</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>🌊 Уровень моря</h3>
+                    <div class="stat-number">+23 см</div>
+                    <p>Подъем с 1880 года</p>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: 45%">+3.4 мм/год</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="survival-quiz-game">
+    <h2>🌍 Спаси планету: Викторина-выживание</h2>
+    <p>Ответь на вопросы правильно, чтобы сохранить здоровье планеты!</p>
+    
+    <div class="quiz-container">
+        <!-- Статус планеты -->
+        <div class="planet-status">
+            <div class="health-display">
+                <div class="planet-icon">🌍</div>
+                <div class="health-info">
+                    <div class="health-bar">
+                        <div class="health-fill" id="planet-health-bar" style="width: 100%"></div>
+                    </div>
+                    <span class="health-text">Здоровье планеты: <span id="health-value">100%</span></span>
+                </div>
+            </div>
+            
+            <div class="game-stats">
+                <div class="stat">
+                    <span class="stat-icon">✅</span>
+                    <span>Верно: <span id="correct-count">0</span></span>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">🌱</span>
+                    <span>Спасено CO₂: <span id="co2-saved">0</span> кг</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">🔥</span>
+                    <span>Вопрос: <span id="question-number">1</span>/10</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вопросы -->
+        <div class="question-section" id="question-section">
+            <h3 id="question-text">Выберите самый эффективный способ снизить углеродный след:</h3>
+            <div class="options-grid" id="options-container">
+            </div>
+        </div>
+
+        <!-- Результат -->
+        <div class="result-section" id="result-section" style="display: none;">
+            <div class="result-card">
+                <h3 id="result-title">Результат викторины!</h3>
+                <div class="result-stats">
+                    <div class="final-stat">
+                        <span class="stat-label">Итоговое здоровье планеты:</span>
+                        <span class="stat-value" id="final-health">100%</span>
+                    </div>
+                    <div class="final-stat">
+                        <span class="stat-label">Правильных ответов:</span>
+                        <span class="stat-value" id="final-correct">0/10</span>
+                    </div>
+                    <div class="final-stat">
+                        <span class="stat-label">Спасено CO₂:</span>
+                        <span class="stat-value" id="final-co2">0 кг</span>
+                    </div>
+                    <div class="achievement" id="achievement-badge"></div>
+                </div>
+                <button onclick="restartQuiz()" class="restart-btn">🔄 Играть снова</button>
+            </div>
+        </div>
+
+        <!-- Прогресс-бар вопросов -->
+        <div class="progress-section">
+            <div class="progress-bar">
+                <div class="progress-fill" id="quiz-progress" style="width: 10%"></div>
+            </div>
+            <div class="progress-text">Прогресс: <span id="progress-text">1/10</span></div>
+        </div>
+    </div>
+</section>
+
+        <section class="intro fade-in">
+            <h2>💚 Почему это важно?</h2>
+            <p>Здоровье человека и здоровье планеты неразрывно связаны. Устойчивое развитие - ключ к нашему будущему.</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://images.unsplash.com/photo-1569163139394-de44cb54d0c4?w=600" alt="Здоровый образ жизни и экология" style="max-width: 100%; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);">
+            </div>
+        </section>
+
+        <section class="daily-tips fade-in">
+    <h2>🌱 Советы на сегодня</h2>
+    <div class="impact-grid">
+        <div class="impact-item">
+            <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=300" alt="Эко-привычки" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px;">
+            <h3>💧 Эко-привычки</h3>
+            <p>Пейте из многоразовой бутылки</p>
+        </div>
+        <div class="impact-item">
+            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300" alt="Прогулка" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px;">
+            <h3>🚶 Транспорт</h3>
+            <p>Прогуляйтесь вместо поездки на авто</p>
+        </div>
+        <div class="impact-item">
+            <img src="https://images.unsplash.com/photo-1490818387583-1baba5e638af?w=300" alt="Здоровое питание" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px;">
+            <h3>🥦 Питание</h3>
+            <p>Выбирайте местные сезонные продукты</p>
+        </div>
+    </div>
+</section>
+
+        <section class="quick-links fade-in">
+            <h2>🔗 Быстрые ссылки</h2>
+            <div class="links-grid">
+                <a href="{{ url_for('nutrition') }}" class="link-card card-health">
+                    <h3>🥗 Питание</h3>
+                    <p>Основы здоровья и Сбалансированного рациона на день</p>
+                    <div class="stat-number" style="color: #333;">1850 ккал</div>
+                </a>
+                <a href="{{ url_for('show_articles') }}" class="link-card card-climate">
+                    <h3>📚 Статьи</h3>
+                    <p>Здоровье и экология</p>
+                </a>
+                <a href="{{ url_for('exercises') }}" class="link-card card-climate">
+                    <h3>💪 Упражнения</h3>
+                    <p>Комплекс упражнений на 25 минут</p>
+                    <div class="stat-number" style="color: #333;">3 блока</div>
+                </a>
+                <a href="{{ url_for('eco_tips') }}" class="link-card card-climate">
+                    <h3>🌍 Эко-советы</h3>
+                    <p>Устойчивый образ жизни</p>
+                </a>
+                <a href="{{ url_for('quiz') }}" class="link-card card-health">
+                    <h3>🧠 Тест</h3>
+                    <p>Проверьте знания</p>
+                    <div class="stat-number" style="color: #333;">10 вопросов</div>
+                </a>
+            </div>
+        </section>
+
+        <section class="habit-tracker fade-in">
+    <h2>📅 Трекер полезных привычек</h2>
+    <div class="habits-grid">
+        <div class="habit-card" data-habit="water">
+            <div class="habit-header">
+                <span class="habit-icon">💧</span>
+                <span class="habit-name">Пить воду</span>
+                <button class="habit-reset" onclick="resetHabit('water')">🔄</button>
+            </div>
+            <div class="habit-progress">
+                <div class="progress-bar" id="water-progress"></div>
+            </div>
+            <div class="habit-controls">
+                <button onclick="decrementHabit('water')">➖</button>
+                <span class="habit-count" id="water-count">0/8 стаканов</span>
+                <button onclick="incrementHabit('water')">➕</button>
+            </div>
+        </div>
+        
+        <div class="habit-card" data-habit="walk">
+            <div class="habit-header">
+                <span class="habit-icon">🚶</span>
+                <span class="habit-name">Прогулка</span>
+                <button class="habit-reset" onclick="resetHabit('walk')">🔄</button>
+            </div>
+            <div class="habit-progress">
+                <div class="progress-bar" id="walk-progress"></div>
+            </div>
+            <div class="habit-controls">
+                <button onclick="decrementHabit('walk')">➖</button>
+                <span class="habit-count" id="walk-count">0/30 мин</span>
+                <button onclick="incrementHabit('walk')">➕</button>
+            </div>
+        </div>
+
+        <div class="habit-card" data-habit="fruit">
+            <div class="habit-header">
+                <span class="habit-icon">🍎</span>
+                <span class="habit-name">Фрукты</span>
+                <button class="habit-reset" onclick="resetHabit('fruit')">🔄</button>
+            </div>
+            <div class="habit-progress">
+                <div class="progress-bar" id="fruit-progress"></div>
+            </div>
+            <div class="habit-controls">
+                <button onclick="decrementHabit('fruit')">➖</button>
+                <span class="habit-count" id="fruit-count">0/5 порций</span>
+                <button onclick="incrementHabit('fruit')">➕</button>
+            </div>
+        </div>
+
+        <div class="habit-card" data-habit="sport">
+            <div class="habit-header">
+                <span class="habit-icon">💪</span>
+                <span class="habit-name">Спорт</span>
+                <button class="habit-reset" onclick="resetHabit('sport')">🔄</button>
+            </div>
+            <div class="habit-progress">
+                <div class="progress-bar" id="sport-progress"></div>
+            </div>
+            <div class="habit-controls">
+                <button onclick="toggleHabit('sport')" class="sport-toggle">✅ Отметить</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="habits-stats">
+        <div class="stat">
+            <span class="stat-number" id="completed-habits">0</span>
+            <span class="stat-label">выполнено сегодня</span>
+        </div>
+        <div class="stat">
+            <span class="stat-number" id="total-progress">0%</span>
+            <span class="stat-label">общий прогресс</span>
+        </div>
+    </div>
+</section>
+
+        <section class="weekly-challenge fade-in">
+            <h2>🎯 Испытание недели</h2>
+            <div class="challenge-card">
+                <h3>♻️ 7 дней без пластика</h3>
+                <p>Попробуйте отказаться от одноразового пластика на неделю</p>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 45%">45%</div>
+                </div>
+            </div>
+        </section>
+    </main>
+        <section class="quiz-promo fade-in">
+            <div class="quiz-card">
+                <h2>🧠 Проверьте свои знания!</h2>
+                <p>Пройдите наш тест и узнайте, насколько хорошо вы разбираетесь в вопросах здоровья и экологии</p>
+                <div class="quiz-stats">
+            <div class="quiz-stat">
+                <span class="stat-number">10</span>
+                <span class="stat-label">вопросов</span>
+            </div>
+                <div class="quiz-stat">
+                    <span class="stat-number">2</span>
+                    <span class="stat-label">темы</span>
+            </div>
+            <div class="quiz-stat">
+                <span class="stat-number">5</span>
+                <span class="stat-label">минут</span>
+            </div>
+        </div>
+        <a href="{{ url_for('quiz') }}" class="quiz-button">Начать тест 🚀</a>
+    </div>
+</section>
+    <footer>
+        <p>© 2025 Твой Гид по Здоровью и Устойчивому Развитию</p>
+    </footer>
+
+    <script>
+        // Простая анимация для прогресс-баров
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressBars = document.querySelectorAll('.progress-bar');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 500);
+            });
+        });
+    </script>
+    <script>
+// Данные привычек
+const habits = {
+    water: { current: 0, target: 8, unit: 'стаканов' },
+    walk: { current: 0, target: 30, unit: 'мин' },
+    fruit: { current: 0, target: 5, unit: 'порций' },
+    sport: { current: 0, target: 1, unit: 'раз' }
+};
+
+// Загружаем сохраненные данные
+function loadHabits() {
+    const saved = localStorage.getItem('habits');
+    if (saved) {
+        Object.assign(habits, JSON.parse(saved));
+    }
+    updateAllHabits();
+}
+
+// Сохраняем данные
+function saveHabits() {
+    localStorage.setItem('habits', JSON.stringify(habits));
+    updateStats();
+}
+
+// Увеличиваем привычку
+function incrementHabit(habitId) {
+    if (habits[habitId].current < habits[habitId].target) {
+        habits[habitId].current++;
+        updateHabit(habitId);
+        saveHabits();
+        
+        // Анимация
+        const card = document.querySelector(`[data-habit="${habitId}"]`);
+        card.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            card.style.transform = 'scale(1)';
+        }, 200);
+    }
+}
+
+// Уменьшаем привычку
+function decrementHabit(habitId) {
+    if (habits[habitId].current > 0) {
+        habits[habitId].current--;
+        updateHabit(habitId);
+        saveHabits();
+    }
+}
+
+// Переключатель для спорта
+function toggleHabit(habitId) {
+    habits[habitId].current = habits[habitId].current === 0 ? 1 : 0;
+    updateHabit(habitId);
+    saveHabits();
+}
+
+// Сброс привычки
+function resetHabit(habitId) {
+    if (confirm('Сбросить прогресс по этой привычке?')) {
+        habits[habitId].current = 0;
+        updateHabit(habitId);
+        saveHabits();
+    }
+}
+
+// Обновляем отображение привычки
+function updateHabit(habitId) {
+    const habit = habits[habitId];
+    const progress = (habit.current / habit.target) * 100;
+    
+    document.getElementById(`${habitId}-progress`).style.width = `${progress}%`;
+    document.getElementById(`${habitId}-count`).textContent = 
+        habitId === 'sport' 
+            ? (habit.current ? '✅ Выполнено' : '⚪ Не выполнено')
+            : `${habit.current}/${habit.target} ${habit.unit}`;
+    
+    // Добавляем класс выполнения
+    const card = document.querySelector(`[data-habit="${habitId}"]`);
+    if (habit.current >= habit.target) {
+        card.classList.add('completed');
+    } else {
+        card.classList.remove('completed');
+    }
+}
+
+// Обновляем все привычки
+function updateAllHabits() {
+    Object.keys(habits).forEach(habitId => {
+        updateHabit(habitId);
+    });
+    updateStats();
+}
+
+// Обновляем статистику
+function updateStats() {
+    const totalHabits = Object.keys(habits).length;
+    const completedHabits = Object.values(habits).filter(h => h.current >= h.target).length;
+    const totalProgress = Math.round((completedHabits / totalHabits) * 100);
+    
+    document.getElementById('completed-habits').textContent = completedHabits;
+    document.getElementById('total-progress').textContent = `${totalProgress}%`;
+    
+    // Сохраняем дату последнего обновления
+    localStorage.setItem('lastUpdate', new Date().toDateString());
+}
+
+// Проверяем, не устарели ли данные (новый день)
+function checkDateReset() {
+    const lastUpdate = localStorage.getItem('lastUpdate');
+    const today = new Date().toDateString();
+    
+    if (lastUpdate !== today) {
+        // Новый день - сбрасываем прогресс
+        Object.keys(habits).forEach(habitId => {
+            habits[habitId].current = 0;
+        });
+        updateAllHabits();
+        saveHabits();
+        
+        // Показываем приветствие
+        showDailyMotivation();
+    }
+}
+
+// Ежедневная мотивация
+function showDailyMotivation() {
+    const messages = [
+        "🌅 Новый день - новые возможности!",
+        "🚀 Начни день с полезных привычек!",
+        "💫 Сегодня ты станешь лучше, чем вчера!",
+        "🌟 Ты можешь всё! Начни с малого!"
+    ];
+    
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    
+    const motivation = document.createElement('div');
+    motivation.innerHTML = `
+        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                   background: white; padding: 30px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+                   text-align: center; z-index: 1000; max-width: 300px;">
+            <h3 style="color: var(--primary); margin-bottom: 15px;">${randomMessage}</h3>
+            <button onclick="this.parentElement.remove()" 
+                    style="background: var(--primary); color: white; border: none; 
+                           padding: 10px 20px; border-radius: 10px; cursor: pointer;">
+                Понятно!
+            </button>
+        </div>
+    `;
+    document.body.appendChild(motivation);
+}
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    loadHabits();
+    checkDateReset();
+});
+</script>
+</body>
+</html>

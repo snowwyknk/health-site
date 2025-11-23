@@ -28,6 +28,26 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
+class Progress(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    date = db.Column(db.Date, default=datetime.utcnow().date)
+    category = db.Column(db.String(50), nullable=False)
+    completed = db.Column(db.Boolean, default=False)
+    notes = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+# Модель для ежедневных целей
+class DailyGoal(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    category = db.Column(db.String(50), nullable=False)
+    goal_name = db.Column(db.String(100), nullable=False)
+    target_value = db.Column(db.Integer)
+    current_value = db.Column(db.Integer, default=0)
+    unit = db.Column(db.String(20))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
 # Создаем таблицы при первом запуске
 with app.app_context():
     db.create_all()
@@ -42,7 +62,7 @@ def load_user(user_id):
 
 @app.route('/articles')
 def show_articles():
-    posts = Post.query.order_by(Post.created_at.desc()).all()  # Сортировка по дате
+    posts = Post.query.order_by(Post.created_at.desc()).all()
     return render_template('articles.html', posts=posts)
 
 @app.route("/nutrition")
@@ -63,7 +83,7 @@ def register():
                 return redirect(url_for('register'))
 
             # Создаем нового пользователя
-            hashed_password = generate_password_hash(request.form['password'], method='sha256')
+            hashed_password = generate_password_hash(request.form['password'])
             new_user = User(
                 username=request.form['username'],
                 email=request.form['email'],
@@ -111,6 +131,46 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+@app.route('/climate')
+def climate_article():
+    return render_template('climate_article.html')
+
+@app.route('/quiz')
+def quiz():
+    return render_template('quiz.html')
+
+@app.route('/exercises')
+def exercises():
+    return render_template('exercises.html')
+
+@app.route('/eco_tips')
+def eco_tips():
+    return render_template('eco_tips.html')
+
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
+# Маршрут для сохранения прогресса (API)
+@app.route('/save_progress', methods=['POST'])
+@login_required
+def save_progress():
+    try:
+        data = request.json
+        progress = Progress(
+            user_id=current_user.id,
+            category=data['category'],
+            completed=data['completed'],
+            notes=data.get('notes', '')
+        )
+        db.session.add(progress)
+        db.session.commit()
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+    
+    
 
 if __name__ == "__main__":
     app.run(debug=True)

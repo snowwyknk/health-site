@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Правильное Питание</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>🥗 Здоровое питание - рацион на день</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">🏠 Главная</a>
+            <a href="{{ url_for('show_articles') }}">📚 Статьи</a>
+            <a href="{{ url_for('nutrition') }}">🥗 Питание</a>
+            <a href="{{ url_for('exercises') }}">💪 Упражнения</a>
+            <a href="{{ url_for('eco_tips') }}">🌍 Эко-советы</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="intro">
+            <h2>🍽️ Сбалансированный рацион на день</h2>
+            <p>Этот план питания обеспечивает все необходимые nutrients для активного дня</p>
+        </section>
+
+        <div class="nutrition-stats">
+            <div class="nutrition-stat">
+                <span class="number">1850</span>
+                <span>ккал</span>
+            </div>
+            <div class="nutrition-stat">
+                <span class="number">45%</span>
+                <span>углеводы</span>
+            </div>
+            <div class="nutrition-stat">
+                <span class="number">30%</span>
+                <span>белки</span>
+            </div>
+            <div class="nutrition-stat">
+                <span class="number">25%</span>
+                <span>жиры</span>
+            </div>
+        </div>
+
+        <div class="nutrition-grid">
+            <!-- Завтрак -->
+            <div class="meal-card">
+                <div class="meal-time">🍳 Завтрак (7:00-8:00)</div>
+                <h3>Овсяная каша с фруктами</h3>
+                <ul class="meal-list">
+                    <li>Овсяные хлопья <span class="calories-badge">150 ккал</span></li>
+                    <li>Банан <span class="calories-badge">90 ккал</span></li>
+                    <li>Миндаль <span class="calories-badge">70 ккал</span></li>
+                    <li>Мед <span class="calories-badge">30 ккал</span></li>
+                </ul>
+                <p><strong>Итого: 340 ккал</strong></p>
+            </div>
+
+            <!-- Обед -->
+            <div class="meal-card">
+                <div class="meal-time">🥗 Обед (13:00-14:00)</div>
+                <h3>Салат с куриной грудкой</h3>
+                <ul class="meal-list">
+                    <li>Куриная грудка <span class="calories-badge">165 ккал</span></li>
+                    <li>Свежие овощи <span class="calories-badge">80 ккал</span></li>
+                    <li>Оливковое масло <span class="calories-badge">120 ккал</span></li>
+                    <li>Киноа <span class="calories-badge">110 ккал</span></li>
+                </ul>
+                <p><strong>Итого: 475 ккал</strong></p>
+            </div>
+
+            <!-- Ужин -->
+            <div class="meal-card">
+                <div class="meal-time">🍲 Ужин (18:00-19:00)</div>
+                <h3>Лосось с овощами на пару</h3>
+                <ul class="meal-list">
+                    <li>Лосось <span class="calories-badge">205 ккал</span></li>
+                    <li>Брокколи <span class="calories-badge">35 ккал</span></li>
+                    <li>Морковь <span class="calories-badge">25 ккал</span></li>
+                    <li>Булгур <span class="calories-badge">100 ккал</span></li>
+                </ul>
+                <p><strong>Итого: 365 ккал</strong></p>
+            </div>
+
+            <!-- Перекусы -->
+            <div class="meal-card">
+                <div class="meal-time">🍎 Перекусы</div>
+                <h3>Здоровые перекусы в течение дня</h3>
+                <ul class="meal-list">
+                    <li>Яблоко <span class="calories-badge">50 ккал</span></li>
+                    <li>Греческий йогурт <span class="calories-badge">100 ккал</span></li>
+                    <li>Орехи <span class="calories-badge">160 ккал</span></li>
+                    <li>Зеленый чай <span class="calories-badge">0 ккал</span></li>
+                </ul>
+                <p><strong>Итого: 310 ккал</strong></p>
+            </div>
+        </div>
+        <!-- Калькулятор калорий -->
+<section class="calorie-calculator">
+    <h2>🧮 Калькулятор калорий</h2>
+    <div class="calculator-container">
+        <div class="calculator-form">
+            <div class="input-group">
+                <label for="foodName">Название продукта:</label>
+                <input type="text" id="foodName" placeholder="Например: Яблоко" class="form-input">
+            </div>
+            
+            <div class="input-group">
+                <label for="foodCalories">Калории на 100г:</label>
+                <input type="number" id="foodCalories" placeholder="52" class="form-input">
+            </div>
+            
+            <div class="input-group">
+                <label for="foodWeight">Вес порции (г):</label>
+                <input type="number" id="foodWeight" placeholder="150" class="form-input">
+            </div>
+            
+            <button onclick="calculateCalories()" class="calculate-btn">📊 Рассчитать</button>
+        </div>
+        
+        <div class="calculator-result" id="calorieResult">
+            <div class="result-placeholder">
+                <span>🔢 Введите данные для расчета</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="common-foods">
+        <h3>🍎 Популярные продукты</h3>
+        <div class="foods-grid">
+            <div class="food-item" onclick="fillFoodData('Яблоко', 52, 150)">
+                <span class="food-icon">🍎</span>
+                <span class="food-name">Яблоко</span>
+                <span class="food-calories">52 ккал/100г</span>
+            </div>
+            <div class="food-item" onclick="fillFoodData('Банан', 89, 120)">
+                <span class="food-icon">🍌</span>
+                <span class="food-name">Банан</span>
+                <span class="food-calories">89 ккал/100г</span>
+            </div>
+            <div class="food-item" onclick="fillFoodData('Куриная грудка', 165, 200)">
+                <span class="food-icon">🍗</span>
+                <span class="food-name">Куриная грудка</span>
+                <span class="food-calories">165 ккал/100г</span>
+            </div>
+            <div class="food-item" onclick="fillFoodData('Рис вареный', 130, 150)">
+                <span class="food-icon">🍚</span>
+                <span class="food-name">Рис вареный</span>
+                <span class="food-calories">130 ккал/100г</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.calorie-calculator {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin: 40px 0;
+}
+
+
+.calculator-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin: 25px 0;
+}
+
+.calculator-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-weight: 600;
+    color: var(--dark);
+}
+
+
+.calculate-btn {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.calculate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.3);
+}
+
+.calculator-result {
+    background: var(--light);
+    border-radius: 15px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+}
+
+
+.result-placeholder {
+    text-align: center;
+    color: #666;
+    font-size: 1.1em;
+}
+
+
+.calorie-result {
+    text-align: center;
+    width: 100%;
+}
+
+.calorie-number {
+    font-size: 3em;
+    font-weight: bold;
+    color: var(--primary);
+    margin: 10px 0;
+}
+
+.calorie-details {
+    margin: 15px 0;
+    line-height: 1.6;
+}
+
+.calorie-bar {
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+.calorie-progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 4px;
+    transition: width 1s ease;
+}
+
+.common-foods {
+    margin-top: 40px;
+}
+
+.foods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.food-item {
+    background: var(--light);
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+
+.food-item:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.food-icon {
+    font-size: 2em;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.food-name {
+    font-weight: 600;
+    color: var(--dark);
+    display: block;
+}
+
+
+.food-calories {
+    font-size: 0.9em;
+    color: #666;
+    display: block;
+}
+
+
+/* Анимация результата */
+@keyframes resultPop {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.result-animate {
+    animation: resultPop 0.6s ease-out;
+}
+</style>
+
+<script>
+function calculateCalories() {
+    const foodName = document.getElementById('foodName').value;
+    const caloriesPer100g = parseFloat(document.getElementById('foodCalories').value);
+    const weight = parseFloat(document.getElementById('foodWeight').value);
+    
+    if (!foodName || !caloriesPer100g || !weight) {
+        alert('Пожалуйста, заполните все поля!');
+        return;
+    }
+    
+    const totalCalories = (caloriesPer100g * weight) / 100;
+    const percentage = (totalCalories / 1850 * 100).toFixed(1);
+    
+    const resultHTML = `
+        <div class="calorie-result result-animate">
+            <h3>🍽️ ${foodName}</h3>
+            <div class="calorie-number">${totalCalories.toFixed(1)} ккал</div>
+            <div class="calorie-details">
+                <p>Порция: <strong>${weight}г</strong></p>
+                <p>Калорийность: <strong>${caloriesPer100g} ккал/100г</strong></p>
+                <p>Это <strong>${percentage}%</strong> от дневной нормы (1850 ккал)</p>
+            </div>
+            <div class="calorie-bar">
+                <div class="calorie-progress" style="width: ${Math.min(percentage, 100)}%"></div>
+            </div>
+            <p style="font-size: 0.9em; color: #666; margin-top: 10px;">
+                ${percentage > 100 ? '⚠️ Превышена дневная норма!' : '✅ В пределах нормы'}
+            </p>
+        </div>
+    `;
+    
+    document.getElementById('calorieResult').innerHTML = resultHTML;
+    
+    // Сохраняем историю
+    saveToHistory(foodName, totalCalories);
+}
+
+function fillFoodData(name, calories, weight) {
+    document.getElementById('foodName').value = name;
+    document.getElementById('foodCalories').value = calories;
+    document.getElementById('foodWeight').value = weight;
+    
+    // Анимация кнопки
+    const button = document.querySelector('.calculate-btn');
+    button.style.transform = 'scale(1.05)';
+    setTimeout(() => {
+        button.style.transform = 'scale(1)';
+    }, 200);
+}
+
+function saveToHistory(foodName, calories) {
+    let history = JSON.parse(localStorage.getItem('calorieHistory')) || [];
+    history.unshift({
+        name: foodName,
+        calories: calories,
+        date: new Date().toLocaleString()
+    });
+    
+    // Сохраняем только последние 10 записей
+    history = history.slice(0, 10);
+    localStorage.setItem('calorieHistory', JSON.stringify(history));
+}
+</script>
+        <section class="food-tips">
+            <h2>📋 5 золотых правил здорового питания:</h2>
+            <ol>
+                <li>🥬 Ешьте больше овощей и фруктов (5-7 порций в день)</li>
+                <li>💧 Пейте воду вместо сладких напитков (1.5-2 л в день)</li>
+                <li>🌾 Выбирайте цельнозерновые продукты</li>
+                <li>🚫 Ограничьте фастфуд и обработанные продукты</li>
+                <li>⚖️ Контролируйте размер порций</li>
+            </ol>
+        </section>
+
+        <section class="progress-section">
+            <h3>📊 Выполнение плана питания сегодня</h3>
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Завтрак</span>
+                    <span>✅ Завершен</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 100%">100%</div>
+                </div>
+            </div>
+            
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Обед</span>
+                    <span>🔄 В процессе</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 30%">30%</div>
+                </div>
+            </div>
+            
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Ужин</span>
+                    <span>⏳ Ожидает</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 0%">0%</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Твой Гид по Здоровью и Устойчивому Развитию</p>
+    </footer>
+</body>
+</html>
